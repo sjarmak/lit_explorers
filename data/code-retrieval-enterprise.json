@@ -1,0 +1,374 @@
+{
+  "meta": {
+    "title": "Code Retrieval & Enterprise Codebases",
+    "h1": "Code Retrieval & Enterprise Codebases",
+    "sub": "Literature explorer &middot; 85 papers, 5 themes &middot; SciX MCP (arXiv + ADS) + industry sources &middot; built 2026-06-08",
+    "tkey": "litx-code",
+    "what_is": "A map of code-retrieval and code-search research with an emphasis on what breaks once you leave the single-file demo and enter a living, multi-million-line enterprise codebase. Built via SciX MCP hybrid search plus sub-agent deep-dives, cross-referenced against industrial code-search blogs (Kythe, Zoekt, Glean, SCIP) and three local benchmark projects (EnterpriseBench, CodeScaleBench, codeprobe).",
+    "caveat": "The dense/ANN index was down during source gathering, so recall here is lexical/hybrid only &mdash; some named systems (RepoFusion, RepoGraph, GRACE) did not surface. Industrial systems (Kythe / Zoekt / Glean / SCIP) are blog-grounded, not peer-reviewed. Several named benchmarks (published EnterpriseBench arXiv:2510.27287, SWE-bench Pro, Long Code Arena, Gemini 1.5 long-context) are referenced in the deep-dives but absent from this corpus and are therefore described in panels rather than listed as papers.",
+    "start_here": [
+      "<b>&#9733; Reading path.</b> Start with <i>Why Code Isn't Text IR</i> (CodeSearchNet, CodeBERT, the vocabulary-mismatch papers), then walk the technique ladder (lexical &rarr; neural &rarr; graph &rarr; rerank), then scale up to repository-level retrieval and code graphs, and finish on the enterprise reality and open frontier.",
+      "<b>&#9733; Opportunities.</b> The 12 open problems from the brainstorm &mdash; access-control-aware retrieval, contamination-proof eval, staleness gating, symbolic+semantic fusion at scale &mdash; are in the Opportunities tab; the thinnest academically are permission-bounded retrieval and tribal-knowledge retrieval.",
+      "<b>Design deep-dives.</b> The Design tab dissects three keystones: a benchmark family (CodeSearchNet/CoIR), a graph-localization system (LocAgent), and a local enterprise benchmark (EnterpriseBench) &mdash; task design, evidence, and what is reusable.",
+      "<b>Timeline.</b> The Temporal tab traces the maturation from 2016 NL&rarr;API lineage through the 2020 CodeBERT explosion to the 2024-2026 agentic / graph / enterprise wave.",
+      "<b>Themes</b> (left nav). Five themes: why code is not text IR, retrieval techniques, repository-scale &amp; code graphs, enterprise challenges, and the open frontier."
+    ],
+    "one_paragraph": "Code retrieval began as text IR with a different corpus and immediately hit a wall: queries and code share little vocabulary, code's lexicon is open-ended, and meaning lives in symbols, references, and structure that a bag-of-tokens embedding flattens away. The field answered with a ladder &mdash; lexical/trigram (rare-token recall), dense neural embeddings (intent), AST/graph methods (behavior), and retrieve-then-rerank cascades &mdash; that is additive, not a sequence of replacements. Scaling to repositories turned retrieval into navigation: iterated similarity RAG, queryable code graphs, and agentic localization. And scaling to the enterprise changed which problems even exist &mdash; billions of LOC, polyglot cross-language dependency chains, access-control boundaries, dead code and churn, tribal knowledge outside the source, and an evaluation crisis where ground truth is contaminated or tautological. The frontier is now an infrastructure problem: a fused symbolic+semantic index that stays fresh under O(changes) updates, gates on freshness and permissions, and is measured honestly.",
+    "podcast": "Companion to the five-episode <b>Code Intel Digest &mdash; Code Retrieval &amp; Enterprise Codebases</b> deep-dive series (Why Code Isn't Text IR; Techniques: Lexical &rarr; Neural &rarr; Graph; Repository-Scale &amp; Code Graphs; The Unique Challenges of Large Enterprise Codebases; Frontier &amp; Open Problems).",
+    "note_r_label": "why it matters",
+    "measured_label": "Evidence &amp; benchmarks",
+    "design_label": "Reusable in practice",
+    "design_sub": "Deep dives into keystone systems and benchmarks: design, evidence, and what is reusable."
+  },
+  "branch_labels": {
+    "foundations": "Why Code != Text IR",
+    "techniques": "Techniques: Lexical/Neural/Graph",
+    "repo-scale": "Repository-Scale & Code Graphs",
+    "enterprise": "Enterprise Codebase Challenges",
+    "frontier": "Frontier & Open Problems"
+  },
+  "papers": [
+    {"bibcode":"2019arXiv190909436H","title":"CodeSearchNet Challenge: Evaluating the State of Semantic Code Search","first_author":"Husain","year":2019,"citation_count":780,"branches":["foundations","techniques"],"notes":[{"branch":"foundations","k":"Foundational NL&rarr;code retrieval benchmark, built around the query/code vocabulary gap","r":"Defined the shared yardstick and named the core reason text IR fails on code: query and result rarely share words"}],"reading_rank":2},
+    {"bibcode":"2020arXiv200208155F","title":"CodeBERT: A Pre-Trained Model for Programming and Natural Languages","first_author":"Feng","year":2020,"citation_count":914,"branches":["foundations","techniques"],"notes":[{"branch":"techniques","k":"Seminal bimodal PL/NL encoder; pretrain on (comment, code) pairs then retrieve","r":"The recipe most later embedding models inherit, and the token-level baseline the structure-aware successors reacted to"}],"reading_rank":1},
+    {"bibcode":"2020arXiv200908366G","title":"GraphCodeBERT: Pre-training Code Representations with Data Flow","first_author":"Guo","year":2020,"citation_count":457,"branches":["foundations","techniques"],"notes":[{"branch":"techniques","k":"Injects data-flow (where-the-value-comes-from) structure with graph-guided masked attention","r":"First clean win for structure over tokens; model shifts attention to structure-level edges in code search, SOTA on four tasks"}],"reading_rank":4},
+    {"bibcode":"2021arXiv210900859W","title":"CodeT5: Identifier-aware Unified Pre-trained Encoder-Decoder Models for Code","first_author":"Wang","year":2021,"citation_count":366,"branches":["techniques"],"notes":[{"branch":"techniques","k":"Identifier-aware unified encoder-decoder for code understanding and generation","r":"Part of the CodeBERT&rarr;GraphCodeBERT&rarr;CodeT5/UniXcoder embedding-lane lineage"}],"reading_rank":0},
+    {"bibcode":"2022arXiv220303850G","title":"UniXcoder: Unified Cross-Modal Pre-training for Code Representation","first_author":"Guo","year":2022,"citation_count":123,"branches":["techniques"],"notes":[{"branch":"techniques","k":"Unified cross-modal embeddings spanning code, comment, and AST","r":"Consolidates the encoder lineage into one cross-modal representation for search and generation"}],"reading_rank":0},
+    {"bibcode":"2024arXiv240702883L","title":"CoIR: A Comprehensive Benchmark for Code Information Retrieval","first_author":"Li","year":2024,"citation_count":12,"branches":["foundations","techniques"],"notes":[{"branch":"foundations","k":"Comprehensive multi-task, multi-language code-IR benchmark; modern successor to CodeSearchNet","r":"Consolidates a fragmented evaluation landscape into one suite so cross-paper scores become comparable"}],"reading_rank":7},
+    {"bibcode":"2024arXiv240611589G","title":"CoSQA+: Enhancing Code Search Dataset with Matching Code","first_author":"Gong","year":2024,"citation_count":6,"branches":["foundations","techniques"],"notes":[{"branch":"foundations","k":"Code-search eval built from genuine developer web-search queries, not synthetic docstrings","r":"Tests the real intent&rarr;code gap with queries drawn from search logs"}],"reading_rank":0},
+    {"bibcode":"2024arXiv240519782C","title":"Dataflow-Guided Retrieval Augmentation for Repository-Level Code Completion (DraCo)","first_author":"Cheng","year":2024,"citation_count":7,"branches":["repo-scale","techniques"],"notes":[{"branch":"repo-scale","k":"Parses a private repo into a dataflow context graph and retrieves from it at completion time","r":"Bridges similarity and graph camps: static analysis steers retrieval (+3.43% EM, +3.27% identifier-F1 on ReccEval)"}],"reading_rank":0},
+    {"bibcode":"2024arXiv240614497Z","title":"CodeRAG-Bench: Can Retrieval Augment Code Generation?","first_author":"Wang","year":2024,"citation_count":23,"branches":["techniques","repo-scale"],"notes":[{"branch":"techniques","k":"Benchmark isolating whether retrieval actually augments code generation","r":"Makes RAG-for-code a measurable, controlled question rather than an assumption"}],"reading_rank":0},
+    {"bibcode":"2024arXiv240201007S","title":"CoRNStack: High-Quality Contrastive Data for Better Code Retrieval and Reranking","first_author":"Suresh","year":2024,"citation_count":5,"branches":["techniques"],"notes":[{"branch":"techniques","k":"Curated contrastive data and hard negatives for both the retriever and the reranker","r":"The data that makes code retrievers/rerankers competitive; metrics unverified via live lookup"}],"reading_rank":0},
+    {"bibcode":"2016arXiv160508535G","title":"Deep API Learning","first_author":"Gu","year":2016,"citation_count":0,"branches":["foundations","techniques"],"notes":[{"branch":"techniques","k":"Early NL&rarr;API sequence learning, ancestor of the DeepCS neural-code-search lineage","r":"Marks the pre-CodeBERT origin of learning the intent&rarr;code mapping directly"}],"reading_rank":0},
+    {"bibcode":"2020arXiv200812193H","title":"Neural Code Search Revisited: Enhancing Code Snippet Retrieval through Natural Language Intent","first_author":"Heyman","year":2020,"citation_count":24,"branches":["techniques","foundations"],"notes":[{"branch":"techniques","k":"Revisits query-by-NL code snippet retrieval, foregrounding natural-language intent","r":"Sharpens the intent-to-snippet matching problem the embedding lane targets"}],"reading_rank":0},
+    {"bibcode":"2021arXiv210313020Z","title":"deGraphCS: Embedding Variable-based Flow Graph for Neural Code Search","first_author":"Zeng","year":2021,"citation_count":0,"branches":["techniques"],"notes":[{"branch":"techniques","k":"Builds a variable-based flow graph and embeds it for code search","r":"Graph-based rung: behavior via flow edges that token models cannot see"}],"reading_rank":0},
+    {"bibcode":"2021arXiv211102671L","title":"GraphSearchNet: Enhancing GNNs via Capturing Global Dependencies for Semantic Code Search","first_author":"Liu","year":2021,"citation_count":10,"branches":["techniques"],"notes":[{"branch":"techniques","k":"GNNs capture global program dependencies for semantic code search","r":"Structure rung that reaches beyond local context to whole-program relations"}],"reading_rank":0},
+    {"bibcode":"2020arXiv201012908L","title":"Deep Graph Matching and Searching for Semantic Code Retrieval","first_author":"Ling","year":2020,"citation_count":0,"branches":["techniques"],"notes":[{"branch":"techniques","k":"Reframes retrieval itself as graph matching rather than vector cosine","r":"Shows the matching primitive can be structural, not just embedding-distance"}],"reading_rank":0},
+    {"bibcode":"2020arXiv200514373L","title":"Opportunities and Challenges in Code Search Tools (CodeMatcher)","first_author":"Liu","year":2020,"citation_count":0,"branches":["foundations","techniques"],"notes":[{"branch":"techniques","k":"A lexical method exploiting sequential semantics of query words that rivals early neural search","r":"The load-bearing 'strong baseline' result: exact/lexical matching never went away and owns rare-identifier recall"}],"reading_rank":6},
+    {"bibcode":"2021arXiv211007811G","title":"Cascaded Fast and Slow Models for Efficient Semantic Code Search","first_author":"Gotmare","year":2021,"citation_count":0,"branches":["techniques"],"notes":[{"branch":"techniques","k":"Fast bi-encoder for recall paired with a slow classifier for precision","r":"Canonical code-specific retrieve-then-rerank cascade"}],"reading_rank":0},
+    {"bibcode":"2020arXiv200704973J","title":"Contrastive Code Representation Learning (ContraCode)","first_author":"Jain","year":2020,"citation_count":41,"branches":["techniques"],"notes":[{"branch":"techniques","k":"Learns code representations by pulling functionally-equivalent variants together","r":"Contrastive lineage that sharpens embedding quality beyond CodeBERT"}],"reading_rank":0},
+    {"bibcode":"2022arXiv220402765D","title":"Code Search: A Survey of Techniques for Finding Code","first_author":"Di Grazia","year":2022,"citation_count":0,"branches":["foundations","techniques"],"notes":[{"branch":"techniques","k":"Survey mapping the lexical-vs-neural-vs-hybrid code-search taxonomy","r":"The landscape map for the whole technique ladder"}],"reading_rank":0},
+    {"bibcode":"2020arXiv200208653W","title":"Detecting Code Clones with Graph Neural Network and Flow-Augmented Abstract Syntax Tree","first_author":"Wang","year":2020,"citation_count":0,"branches":["techniques"],"notes":[{"branch":"techniques","k":"GNN over a flow-augmented AST for clone/similarity detection","r":"The clone/similarity primitive underlying behavioral code retrieval"}],"reading_rank":0},
+    {"bibcode":"2020arXiv200303238W","title":"TranS^3: A Transformer-based Framework for Unifying Code Summarization and Code Search","first_author":"Wang","year":2020,"citation_count":22,"branches":["techniques"],"notes":[{"branch":"techniques","k":"Unifies code summarization and code search in one neural/hybrid framework","r":"Couples the summarize and search tasks that share representation needs"}],"reading_rank":0},
+    {"bibcode":"2020arXiv200412832K","title":"ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT","first_author":"Khattab","year":2020,"citation_count":97,"branches":["techniques"],"notes":[{"branch":"techniques","k":"Late interaction: encode query/doc independently, score with cheap per-token MaxSim","r":"The middle ground between bi- and cross-encoders; ~2 orders faster, ~4 orders fewer FLOPs than full reranking, adapted to code"}],"reading_rank":0},
+    {"bibcode":"2022arXiv220110005N","title":"Text and Code Embeddings by Contrastive Pre-Training","first_author":"Neelakantan","year":2022,"citation_count":292,"branches":["techniques"],"notes":[{"branch":"techniques","k":"Large-scale contrastive pre-training yields embeddings that transfer to code search","r":"Shows general contrastive embeddings reach code; exposes the single-vector no-interaction ceiling"}],"reading_rank":0},
+    {"bibcode":"2023arXiv231107989Z","title":"Unifying the Perspectives of NLP and Software Engineering: A Survey on Language Models for Code","first_author":"Zhang","year":2023,"citation_count":51,"branches":["foundations","techniques"],"notes":[{"branch":"foundations","k":"Survey explicitly unifying NLP and SE perspectives on code language models","r":"States the series premise: code retrieval borrows from text IR but must diverge"}],"reading_rank":0},
+    {"bibcode":"2020arXiv200910297R","title":"CodeBLEU: a Method for Automatic Evaluation of Code Synthesis","first_author":"Ren","year":2020,"citation_count":0,"branches":["foundations"],"notes":[{"branch":"foundations","k":"Injects AST syntax and data-flow semantics into BLEU for evaluating code","r":"Proves even measuring code can't borrow text-IR metrics unchanged; correlates better with programmer judgments"}],"reading_rank":0},
+    {"bibcode":"2020arXiv200307914K","title":"Big Code != Big Vocabulary: Open-Vocabulary Models for Source Code","first_author":"Karampatsis","year":2020,"citation_count":0,"branches":["foundations"],"notes":[{"branch":"foundations","k":"Names and mechanizes code's open, ever-growing vocabulary (OOV) problem","r":"Mechanical root cause of why off-the-shelf text embeddings choke on code identifiers"}],"reading_rank":5},
+    {"bibcode":"2020arXiv200605265Y","title":"MISIM: A Neural Code Semantics Similarity System (Machine Inferred Code Similarity)","first_author":"Ye","year":2020,"citation_count":0,"branches":["foundations","techniques"],"notes":[{"branch":"foundations","k":"Context-aware semantics structure that lifts meaning out of syntax for similarity","r":"Clean named instance of structure beating token-bag; existing methods 'mainly operate on identifiers'"}],"reading_rank":0},
+    {"bibcode":"2021arXiv210809646M","title":"A Systematic Review of Automated Query Reformulations in Source Code Search","first_author":"Masudur Rahman","year":2021,"citation_count":0,"branches":["foundations"],"notes":[{"branch":"foundations","k":"Synthesizes 70 studies on rewriting developers' ad-hoc keyword queries","r":"That this subfield exists is direct evidence the intent&rarr;query&rarr;code chain is lossy at every hop"}],"reading_rank":0},
+    {"bibcode":"2022arXiv220403293S","title":"CoCoSoDa: Effective Contrastive Learning for Code Search","first_author":"Shi","year":2022,"citation_count":0,"branches":["techniques"],"notes":[{"branch":"techniques","k":"Soft data augmentation plus momentum-queue negatives for NL&rarr;code contrastive learning","r":"Names the two levers (augmentation, hard negatives) that make code embeddings good"}],"reading_rank":0},
+    {"bibcode":"2020arXiv201008191Q","title":"RocketQA: An Optimized Training Approach to Dense Passage Retrieval","first_author":"Qu","year":2020,"citation_count":0,"branches":["techniques"],"notes":[{"branch":"techniques","k":"Cross-batch negatives, denoised hard-negative mining, and augmentation for dual encoders","r":"Explains why the code-embedding lane needs hard-negative mining: garbage negatives yield a garbage retriever"}],"reading_rank":0},
+    {"bibcode":"2021arXiv211209118I","title":"Unsupervised Dense Information Retrieval with Contrastive Learning (Contriever)","first_author":"Izacard","year":2021,"citation_count":0,"branches":["techniques","foundations"],"notes":[{"branch":"techniques","k":"Unsupervised dense retrieval still loses to BM25 without supervision","r":"The inconvenient evidence for 'don't drop lexical' and the foundational argument for hybrid over pure-dense"}],"reading_rank":0},
+    {"bibcode":"2020arXiv201006467L","title":"Pretrained Transformers for Text Ranking: BERT and Beyond","first_author":"Lin","year":2020,"citation_count":0,"branches":["techniques"],"notes":[{"branch":"techniques","k":"The multi-stage ranking map: cheap first-stage retriever feeds an expensive reranker","r":"Frames the bi- vs cross-encoder vs late-interaction design space the code rung instantiates"}],"reading_rank":0},
+    {"bibcode":"2020arXiv201204188Z","title":"Heterogeneous Program Graph Representations for Source Code","first_author":"Zhang","year":2020,"citation_count":0,"branches":["techniques"],"notes":[{"branch":"techniques","k":"Typed heterogeneous program graphs recover node-type info that plain ASTs discard","r":"Concretizes 'why graph beats sequence': control/data-flow edges encode behavior tokens cannot"}],"reading_rank":0},
+    {"bibcode":"2023arXiv230312570Z","title":"RepoCoder: Repository-Level Code Completion Through Iterative Retrieval and Generation","first_author":"Zhang","year":2023,"citation_count":97,"branches":["repo-scale"],"notes":[{"branch":"repo-scale","k":"Retrieve-generate-retrieve loop where each draft becomes a better query","r":"Canonical iterated-similarity move for cross-file completion, but inherits vector RAG's blindness to structure"}],"reading_rank":8},
+    {"bibcode":"2023arXiv230603091L","title":"RepoBench: Benchmarking Repository-Level Code Auto-Completion Systems","first_author":"Liu","year":2023,"citation_count":101,"branches":["repo-scale"],"notes":[{"branch":"repo-scale","k":"Establishes repo-level / cross-file completion as a measurable task","r":"Exposes how badly single-file models do when the answer lives in another file"}],"reading_rank":9},
+    {"bibcode":"2023arXiv231011248D","title":"CrossCodeEval: A Diverse and Multilingual Benchmark for Cross-File Code Completion","first_author":"Ding","year":2023,"citation_count":23,"branches":["repo-scale"],"notes":[{"branch":"repo-scale","k":"Multilingual cross-file completion benchmark","r":"Makes the cross-file dependency the measured unit, across languages"}],"reading_rank":0},
+    {"bibcode":"2024arXiv240719487W","title":"RLCoder: Reinforcement Learning for Repository-Level Code Completion","first_author":"Wang","year":2024,"citation_count":17,"branches":["repo-scale"],"notes":[{"branch":"repo-scale","k":"Trains the retriever with RL for repo-level completion","r":"Moves retrieval from heuristic to learned reward signal at repo scale"}],"reading_rank":0},
+    {"bibcode":"2024arXiv240212317S","title":"EVOR: Evolving Retrieval for Code Generation","first_author":"Su","year":2024,"citation_count":18,"branches":["repo-scale"],"notes":[{"branch":"repo-scale","k":"Co-evolves the query and the knowledge base during generation","r":"Treats the retrieval target as moving, not fixed, during a task"}],"reading_rank":0},
+    {"bibcode":"2023arXiv231006770J","title":"SWE-bench: Can Language Models Resolve Real-World GitHub Issues?","first_author":"Jimenez","year":2023,"citation_count":243,"branches":["repo-scale","enterprise"],"notes":[{"branch":"repo-scale","k":"Issue-resolution benchmark over real GitHub repos","r":"The yardstick the agentic camp competes on, and the contamination-prone baseline the enterprise critique targets"}],"reading_rank":3},
+    {"bibcode":"2024arXiv240515793Y","title":"SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering","first_author":"Yang","year":2024,"citation_count":150,"branches":["repo-scale"],"notes":[{"branch":"repo-scale","k":"Purpose-built agent-computer interface for navigation/edit instead of a raw shell","r":"Sobering finding: iterative search can degrade performance versus no search at all"}],"reading_rank":10},
+    {"bibcode":"2024arXiv240716741W","title":"OpenHands: An Open Platform for AI Software Developers as Generalist Agents","first_author":"Wang","year":2024,"citation_count":92,"branches":["repo-scale"],"notes":[{"branch":"repo-scale","k":"Open agent platform generalizing the agent-computer interface","r":"The shared substrate much agentic-SE work builds and evaluates on"}],"reading_rank":0},
+    {"bibcode":"2024arXiv240405427Z","title":"AutoCodeRover: Autonomous Program Improvement","first_author":"Zhang","year":2024,"citation_count":51,"branches":["repo-scale"],"notes":[{"branch":"repo-scale","k":"AST-based search plus spectrum fault localization for autonomous repair","r":"Shows structural search beats flat retrieval for locating the edit site"}],"reading_rank":0},
+    {"bibcode":"2025arXiv250309089C","title":"LocAgent: Graph-Guided LLM Agents for Code Localization","first_author":"Chen","year":2025,"citation_count":0,"branches":["repo-scale","frontier"],"notes":[{"branch":"repo-scale","k":"Parses the codebase into a heterogeneous graph and does multi-hop reasoning over it","r":"92.7% file-level localization, +12% issue resolution (Pass@10), ~86% cheaper with a fine-tuned 32B model"}],"reading_rank":11},
+    {"bibcode":"2026arXiv260503117S","title":"ARISE: Repo-Level Graph and Toolset for Fault Localization and Program Repair","first_author":"Seddik","year":2026,"citation_count":0,"branches":["repo-scale","frontier"],"notes":[{"branch":"repo-scale","k":"Couples a repo-level graph with a toolset for fault localization and APR","r":"Extends graph-guided localization into the repair loop"}],"reading_rank":0},
+    {"bibcode":"2024arXiv240601422M","title":"LingmaAgent: Towards Comprehensive Repository Exploration in Automated Software Engineering","first_author":"Ma","year":2024,"citation_count":29,"branches":["repo-scale"],"notes":[{"branch":"repo-scale","k":"Monte-Carlo-style comprehensive repository exploration (Alibaba)","r":"Industrial agentic exploration strategy for unfamiliar repos"}],"reading_rank":0},
+    {"bibcode":"2023arXiv230912499B","title":"CodePlan: Repository-Level Coding using LLMs and Planning","first_author":"Bairi","year":2023,"citation_count":41,"branches":["repo-scale"],"notes":[{"branch":"repo-scale","k":"Frames repo-wide edits as planning over a dependency graph","r":"Treats multi-file change as planning, not a chain of local completions"}],"reading_rank":0},
+    {"bibcode":"2026arXiv260502421L","title":"AOCI: AI-Oriented Code Indexing for Repository-Scale Understanding","first_author":"Liu","year":2026,"citation_count":0,"branches":["repo-scale","frontier"],"notes":[{"branch":"frontier","k":"Symbolic-semantic blueprint an LLM reads in a single pass; incrementally maintained","r":"Across 2,160 evals beats deployable baselines; zero defects on 19 industrial tasks vs 4-130x more tokens for mainstream agents"}],"reading_rank":0},
+    {"bibcode":"2024arXiv240608098L","title":"QVoG: Scalable Defect Detection via Compressed Code-Property-Graph Traversal","first_author":"Liu","year":2024,"citation_count":0,"branches":["repo-scale","frontier"],"notes":[{"branch":"repo-scale","k":"Compressed CPG with a declarative query language at 1M+ LOC","r":"Scalability proof: ~15 min vs ~19 min (CodeQL) on million-line codebases"}],"reading_rank":0},
+    {"bibcode":"2025arXiv250318175S","title":"Vulnerability Detection using Code Property Graphs and CNNs","first_author":"Singh Saimbhi","year":2025,"citation_count":0,"branches":["repo-scale"],"notes":[{"branch":"repo-scale","k":"CPG features fed to CNNs for vulnerability detection","r":"Code-property-graph lineage applied to security defect finding"}],"reading_rank":0},
+    {"bibcode":"2026arXiv260410767C","title":"VulWeaver: Grounded Vulnerability Detection","first_author":"Cao","year":2026,"citation_count":0,"branches":["repo-scale"],"notes":[{"branch":"repo-scale","k":"Grounds vulnerability detection in static analysis","r":"Static-analysis grounding to reduce false positives at scale"}],"reading_rank":0},
+    {"bibcode":"2025arXiv250307967P","title":"Code Digital Twin: Representing and Maintaining Tacit Knowledge for Software Maintenance","first_author":"Peng","year":2025,"citation_count":0,"branches":["repo-scale","enterprise"],"notes":[{"branch":"enterprise","k":"Co-evolving representation fusing knowledge graphs and text to capture tacit knowledge","r":"Argues the highest-value context (design rationale, responsibility) is what static analysis cannot extract"}],"reading_rank":0},
+    {"bibcode":"2024arXiv240203630L","title":"Enabling Static Analysis Context for Repository-Level Coding Tools (IDE-Derived Context)","first_author":"Li","year":2024,"citation_count":8,"branches":["repo-scale","techniques"],"notes":[{"branch":"repo-scale","k":"Uses IDE/static-analysis-derived static context for coding tools","r":"Static-analysis retrieval supplying precise type/symbol context"}],"reading_rank":0},
+    {"bibcode":"2026arXiv260422659L","title":"RealBench: Repository-Level Code Generation Aligned to Real-World Tasks","first_author":"Li","year":2026,"citation_count":0,"branches":["repo-scale","enterprise"],"notes":[{"branch":"enterprise","k":"Repo-level code-gen benchmark aligned to real-world tasks","r":"Pushes evaluation toward production realism"}],"reading_rank":0},
+    {"bibcode":"2024arXiv240902977L","title":"Large Language Model-Based Agents for Software Engineering: A Survey","first_author":"Liu","year":2024,"citation_count":40,"branches":["repo-scale"],"notes":[{"branch":"repo-scale","k":"Survey of LLM agents for software engineering","r":"Maps the agentic-SE landscape that retrieval underpins"}],"reading_rank":0},
+    {"bibcode":"2024arXiv240909030W","title":"Agents in Software Engineering: Survey, Landscape, and Vision","first_author":"Wang","year":2024,"citation_count":10,"branches":["repo-scale"],"notes":[{"branch":"repo-scale","k":"Survey and vision for agents in software engineering","r":"Complementary landscape framing for the agentic wave"}],"reading_rank":0},
+    {"bibcode":"2023arXiv231205772L","title":"A^3-CodGen: Repository-Level Code Generation with Local/Global/Third-Party Awareness","first_author":"Liao","year":2023,"citation_count":0,"branches":["repo-scale"],"notes":[{"branch":"repo-scale","k":"Names the retrieval-scope taxonomy: local-aware, global-aware, third-party-library-aware","r":"Splits repo-scale retrieval into three distinct problems, not one"}],"reading_rank":0},
+    {"bibcode":"2024arXiv240803910L","title":"CodexGraph: Bridging Large Language Models and Code Repositories via Code Graph Databases","first_author":"Liu","year":2024,"citation_count":0,"branches":["repo-scale"],"notes":[{"branch":"repo-scale","k":"Indexes the repo into a graph DB and lets the LLM write graph queries for context","r":"Reframes retrieval from vector-similarity guessing to querying a world model"}],"reading_rank":0},
+    {"bibcode":"2024arXiv240502355D","title":"CodeGRAG: Bridging the Gap between Natural Language and Programming Language via Graphical Retrieval","first_author":"Du","year":2024,"citation_count":0,"branches":["repo-scale"],"notes":[{"branch":"repo-scale","k":"Builds control/data-flow graph views and trains a GNN expert to inject structure","r":"Pushes structural knowledge into the model rather than just the retriever"}],"reading_rank":0},
+    {"bibcode":"2024arXiv240317927T","title":"MAGIS: LLM-Based Multi-Agent Framework for GitHub Issue Resolution","first_author":"Tao","year":2024,"citation_count":0,"branches":["repo-scale"],"notes":[{"branch":"repo-scale","k":"Role decomposition with a dedicated 'Repository Custodian' for file localization","r":"Makes localization its own agent, separate from developer and QA"}],"reading_rank":0},
+    {"bibcode":"2024arXiv241204478K","title":"LibEvolutionEval: A Benchmark for Library Evolution and Version-Specific Code Generation","first_author":"Kuhar","year":2024,"citation_count":0,"branches":["frontier","repo-scale"],"notes":[{"branch":"frontier","k":"Tracks completion degradation as public-library APIs drift across versions","r":"Repo context is not just other files here; it is the moving external dependency surface, partly rescued by version-pinned docs"}],"reading_rank":0},
+    {"bibcode":"2026arXiv260413108J","title":"Architecture Descriptors for Agentic Code Navigation","first_author":"Jin","year":2026,"citation_count":0,"branches":["repo-scale","frontier"],"notes":[{"branch":"repo-scale","k":"Field study of 7,012 Claude Code sessions; a formal architecture descriptor cuts navigation 33-44%","r":"Undirected exploration is a measurable tax; descriptors slash navigation steps (d=0.92) and variance 52%; format choice should optimize safe failure, not LLM preference"}],"reading_rank":0},
+    {"bibcode":"2025arXiv250321710Y","title":"KGCompass: Repository-Aware Knowledge Graph for Bug Localization and Repair","first_author":"Yang","year":2025,"citation_count":0,"branches":["frontier","repo-scale"],"notes":[{"branch":"frontier","k":"Repo-aware KG linking issues/PRs to code, narrowing to ~20 candidate functions","r":"45.67% on SWE-bench-Lite at $0.20/repair; 69.7% of localized bugs needed multi-hop traversal, proof flat retrieval misses most fix sites"}],"reading_rank":0},
+    {"bibcode":"2024arXiv240601359D","title":"R2C2-Coder: Enhancing and Benchmarking Real-world Repository-level Code Completion","first_author":"Deng","year":2024,"citation_count":0,"branches":["enterprise","repo-scale"],"notes":[{"branch":"enterprise","k":"Real-world repo-level completion at monorepo scale","r":"Operates on the in-source half of enterprise context"}],"reading_rank":0},
+    {"bibcode":"2024arXiv240606025L","title":"RepoQA: Evaluating Long Context Code Understanding","first_author":"Liu","year":2024,"citation_count":0,"branches":["enterprise","frontier"],"notes":[{"branch":"enterprise","k":"Searching-Needle-Function over long code context; 500 tasks, 50 repos, 5 languages","r":"Capacity is not comprehension; models often understand code better with comments removed; GPT-4 only 1.31% in their setup"}],"reading_rank":0},
+    {"bibcode":"2024arXiv240107339Z","title":"CodeAgent: Enhancing Code Generation with Tool-Integrated Agent Systems for Repo-Level Coding","first_author":"Zhang","year":2024,"citation_count":0,"branches":["enterprise","repo-scale"],"notes":[{"branch":"enterprise","k":"Tool-integrated agent for repo-level coding challenges","r":"Brings external tools into the repo-scale coding loop"}],"reading_rank":0},
+    {"bibcode":"2024arXiv240915204B","title":"RAMBO: Enhancing RAG-based Repository-Level Method Body Completion","first_author":"Bui","year":2024,"citation_count":0,"branches":["enterprise","repo-scale"],"notes":[{"branch":"enterprise","k":"RAG-based repo-level method-body completion","r":"Scales the RAG completion pattern to method bodies in large repos"}],"reading_rank":0},
+    {"bibcode":"2024arXiv240913122W","title":"RepoGenReflex: Enhancing Repository-Level Code Completion with Verbal RL and RAG","first_author":"Wang","year":2024,"citation_count":0,"branches":["enterprise","repo-scale"],"notes":[{"branch":"enterprise","k":"Combines verbal RL (Reflexion-style) and RAG for multi-file completion","r":"Adds a reflective loop on top of multi-file retrieval"}],"reading_rank":0},
+    {"bibcode":"2024arXiv240811058J","title":"On the Effectiveness of LLM Agents for Semantic Code Search","first_author":"Jain","year":2024,"citation_count":0,"branches":["enterprise","techniques"],"notes":[{"branch":"enterprise","k":"LLM agents reformulate queries to improve semantic code search","r":"Agentic attack on the lossy intent&rarr;query hop"}],"reading_rank":0},
+    {"bibcode":"2025arXiv250215872K","title":"MutaGReP: Execution-Free Repository-Grounded Plan Search","first_author":"Khan","year":2025,"citation_count":0,"branches":["enterprise"],"notes":[{"branch":"enterprise","k":"Mutation-guided plan search grounded by a symbol retriever","r":"Plans using <5% of a 128K window rival GPT-4o with the full repo: retrieving a grounded plan beats stuffing the window"}],"reading_rank":0},
+    {"bibcode":"2023arXiv230902182C","title":"Using a Nearest-Neighbour, BERT-Based Approach for Scalable Clone Detection","first_author":"Chochlov","year":2023,"citation_count":0,"branches":["enterprise"],"notes":[{"branch":"enterprise","k":"NN/BERT approach for scalable clone detection","r":"Prerequisite for paying down clone/dup debt that accretes at enterprise scale"}],"reading_rank":0},
+    {"bibcode":"2025arXiv250417972A","title":"Industrial-Scale Clone Detection with Disk-Based Similarity Search","first_author":"Aftab Ahmed","year":2025,"citation_count":0,"branches":["enterprise"],"notes":[{"branch":"enterprise","k":"Disk-based similarity search for clone detection across millions of LOC","r":"Industrial-scale IR where in-memory approaches no longer fit"}],"reading_rank":0},
+    {"bibcode":"2026arXiv260508112D","title":"Product Context Improves AI Coding Agent Decision Compliance by 49%","first_author":"Dillon","year":2026,"citation_count":0,"branches":["enterprise","frontier"],"notes":[{"branch":"enterprise","k":"Augmenting an agent with a product-context retrieval system lifts decision compliance 46%&rarr;95%","r":"Cleanest tribal-knowledge demonstration: 100% on codebase-visible decisions but 0-33% on product-context decisions without it"}],"reading_rank":12},
+    {"bibcode":"2025arXiv250318305O","title":"K-Trans: Triple Knowledge-Augmentation for Repository-Context Code Translation","first_author":"Ou","year":2025,"citation_count":0,"branches":["enterprise"],"notes":[{"branch":"enterprise","k":"Triple knowledge augmentation for polyglot repo-context translation","r":"+19.4%/40.2% pass@1; dependency-usage examples contribute most: the boundary, not the body, carries the hard context"}],"reading_rank":0},
+    {"bibcode":"2024arXiv240814354Z","title":"SWE-bench-java: A GitHub Issue Resolving Benchmark for Java","first_author":"Zan","year":2024,"citation_count":0,"branches":["enterprise"],"notes":[{"branch":"enterprise","k":"Ports SWE-bench issue resolution to Java","r":"Exposes how much agentic-SE capability was Python-specific"}],"reading_rank":0},
+    {"bibcode":"2024arXiv240204141D","title":"Enterprise-codebase challenge source (Episode 4 supporting reference)","first_author":"D.","year":2024,"citation_count":0,"branches":["enterprise"],"notes":[{"branch":"enterprise","k":"Supporting source for the enterprise-challenges episode; annotation unresolved in corpus","r":"Included because it is a real ep4 reference bibcode; title/abstract did not resolve via lexical-only lookup"}],"reading_rank":0},
+    {"bibcode":"2024arXiv241211869L","title":"Enterprise-codebase challenge source (Episode 4 supporting reference)","first_author":"L.","year":2024,"citation_count":0,"branches":["enterprise"],"notes":[{"branch":"enterprise","k":"Supporting source for the enterprise-challenges episode; annotation unresolved in corpus","r":"Included because it is a real ep4 reference bibcode; title/abstract did not resolve via lexical-only lookup"}],"reading_rank":0},
+    {"bibcode":"2025arXiv250107531R","title":"Enterprise-codebase challenge source (Episode 4 supporting reference)","first_author":"R.","year":2025,"citation_count":0,"branches":["enterprise"],"notes":[{"branch":"enterprise","k":"Supporting source for the enterprise-challenges episode; annotation unresolved in corpus","r":"Included because it is a real ep4 reference bibcode; title/abstract did not resolve via lexical-only lookup"}],"reading_rank":0},
+    {"bibcode":"2026arXiv260516517K","title":"Enterprise-codebase challenge source (Episode 4 supporting reference)","first_author":"K.","year":2026,"citation_count":0,"branches":["enterprise"],"notes":[{"branch":"enterprise","k":"Supporting source for the enterprise-challenges episode; annotation unresolved in corpus","r":"Included because it is a real ep4 reference bibcode; title/abstract did not resolve via lexical-only lookup"}],"reading_rank":0},
+    {"bibcode":"2026arXiv260514478W","title":"When Retrieval Hurts Code Completion: A Staleness Diagnostic","first_author":"Weng","year":2026,"citation_count":0,"branches":["frontier"],"notes":[{"branch":"frontier","k":"Controlled diagnostic: hiding commit freshness makes stale-only retrieval inject obsolete APIs","r":"Stale context is net-negative (15/17 and 13/17 obsolete refs, +88/+77 pp); temporal validity is a distinct retrieval variable"}],"reading_rank":0},
+    {"bibcode":"2026arXiv260502163B","title":"DocSync: Detecting and Repairing Code-Documentation Drift","first_author":"B.","year":2026,"citation_count":0,"branches":["frontier"],"notes":[{"branch":"frontier","k":"Failure taxonomy (Silent Constraint Shifts, Tutorial Rot) fixed by AST + RAG + a Reflexion critic","r":"Names doc drift that is 'functionally lethal' yet passes the linter; documentation staleness as a retrieval hazard"}],"reading_rank":0},
+    {"bibcode":"2026arXiv260408089L","title":"GALA: Graph-Aligned Localization for Multimodal (GUI) Bug Resolution","first_author":"L.","year":2026,"citation_count":0,"branches":["frontier"],"notes":[{"branch":"frontier","k":"Builds a UI graph from bug screenshots and cross-references repo file/call graphs","r":"Extends graph-guided localization to visual&rarr;code grounding on SWE-bench Multimodal"}],"reading_rank":0},
+    {"bibcode":"2026arXiv260407830C","title":"To Copilot and Beyond: A Survey of 860 Microsoft Developers on AI They Want Built","first_author":"Choudhuri","year":2026,"citation_count":0,"branches":["frontier","enterprise"],"notes":[{"branch":"frontier","k":"Catalogues 22 wanted AI systems; central demand is 'bounded delegation'","r":"The design language for access-control and tribal knowledge: authority scoping, provenance, uncertainty, least privilege"}],"reading_rank":0},
+    {"bibcode":"2026arXiv260425960J","title":"Multilingual Code Intelligence: A Survey","first_author":"J.","year":2026,"citation_count":0,"branches":["frontier","enterprise"],"notes":[{"branch":"frontier","k":"Catalogs why cross-language generalization is hard and why deps are vital for buildability","r":"Polyglot-retrieval frame: retrieving class definitions plus their dependencies is vital for code buildability"}],"reading_rank":0},
+    {"bibcode":"2026arXiv260524397C","title":"Breaking Changes in Software Ecosystems: A Systematic Literature Review","first_author":"C.","year":2026,"citation_count":0,"branches":["frontier","enterprise"],"notes":[{"branch":"frontier","k":"SLR grounding dependency-graph propagation of breaking changes","r":"The dependency-drift angle that polyglot retrieval must track across an ecosystem"}],"reading_rank":0},
+    {"bibcode":"2024arXiv240304811R","title":"Quantifying Contamination in Evaluating Code Generation Capabilities of Language Models","first_author":"Riddell","year":2024,"citation_count":0,"branches":["frontier","enterprise"],"notes":[{"branch":"frontier","k":"Quantifies benchmark/pretraining overlap via surface- and semantic-level matching","r":"Models score higher on the seen subset of HumanEval/MBPP: the empirical case for contamination-proof eval"}],"reading_rank":0}
+  ],
+  "sections": [
+    {
+      "key": "foundations",
+      "label": "Why Code != Text IR",
+      "subtopic": "Code retrieval is not text IR with a different corpus: query/code vocabulary mismatch, an open code lexicon, and meaning that lives in structure all break the assumptions of classical IR.",
+      "themes": [
+        "Vocabulary mismatch: a developer's query and the target snippet often share almost no tokens (CodeSearchNet).",
+        "Open vocabulary: code coins identifiers endlessly, so OOV cripples neural LMs (Big Code != Big Vocabulary).",
+        "Structure is signal text IR throws away: data/control flow, call graphs (MISIM, GraphCodeBERT).",
+        "The intent&rarr;query&rarr;code chain is lossy at every hop, spawning a whole query-reformulation subfield.",
+        "Even metrics can't be borrowed: CodeBLEU re-injects AST + data flow that BLEU and exact-match miss.",
+        "Industry consensus: 'mgrep finds the file, grep finds the line' &mdash; no single mode suffices, everyone ends up hybrid."
+      ],
+      "how_measured": [
+        "CodeSearchNet (2019): paired (docstring, function), 6 languages, MRR.",
+        "CoIR (2024): comprehensive multi-task multi-language code-IR suite, the modern successor.",
+        "CoSQA+ (2024): real developer web-search queries.",
+        "CodeBLEU (2020): AST + data-flow-aware synthesis metric (vs BLEU / exact-match)."
+      ],
+      "gaps": [
+        "Cross-paper retrieval scores (MRR on CodeSearchNet) are not apples-to-apples; preprocessing and language subsets differ &mdash; the fragmentation CoIR was built to fix.",
+        "Pre-2016 classic lexical/structural search (Sourcerer, Portfolio, Sniff, grep/ctags) is absent (pre-arXiv venues)."
+      ],
+      "notable": [
+        "CodeBERT is the seminal bimodal encoder and the token-level baseline its structure-aware successors react to.",
+        "CodeMatcher is the 'strong lexical baseline' that should temper any pure-neural pitch."
+      ],
+      "papers": ["2019arXiv190909436H","2020arXiv200208155F","2020arXiv200910297R","2020arXiv200307914K","2020arXiv200605265Y","2021arXiv210809646M","2024arXiv240702883L","2024arXiv240611589G","2022arXiv220402765D","2023arXiv231107989Z","2016arXiv160508535G","2020arXiv200812193H","2020arXiv200514373L"]
+    },
+    {
+      "key": "techniques",
+      "label": "Techniques: Lexical/Neural/Graph",
+      "subtopic": "An additive ladder, not a sequence of replacements: lexical owns rare tokens, dense embeddings own intent, graph methods own behavior, and cascades place each technique where its cost is justified.",
+      "themes": [
+        "Rung 1 &mdash; lexical/trigram/BM25: fast, exact, interpretable, owns rare-token recall (Zoekt lineage, CodeMatcher).",
+        "Rung 2 &mdash; neural bi-encoders + contrastive learning: CodeBERT, ContraCode, CoCoSoDa; need hard negatives (RocketQA) or they underperform.",
+        "Rung 3 &mdash; AST/graph: data flow (GraphCodeBERT), flow graphs (deGraphCS), GNNs (GraphSearchNet), graph matching.",
+        "Rung 4 &mdash; hybrid retrieve-then-rerank / late interaction: multi-stage ranking (Lin et al.), ColBERT, Cascaded Fast & Slow, CoRNStack.",
+        "Fuse on ranks, not scores: BM25 and dense lanes live on incomparable scales; RRF sidesteps calibration.",
+        "Contriever is the receipt: unsupervised dense loses to BM25 &mdash; dense only wins with supervision."
+      ],
+      "how_measured": [
+        "CodeSearchNet / CoIR as the standing benchmark spine; MRR on code search.",
+        "GraphCodeBERT: SOTA on code search, clone detection, translation, refinement.",
+        "ColBERT: parity with full BERT rerankers at ~2 orders faster, ~4 orders fewer FLOPs/query.",
+        "RocketQA / CoCoSoDa ablations attribute gains to hard-negative mining + augmentation."
+      ],
+      "gaps": [
+        "Dense/ANN index was down during gathering &mdash; recall is lexical/hybrid only; CoRNStack metrics unverified via live lookup.",
+        "Graph methods are most expressive but cost parsing + GNN inference, hard to amortize across a multi-million-file monorepo."
+      ],
+      "notable": [
+        "The trade curves matter more than leaderboard rows: single-vector vs late-interaction (index size), token vs graph (parse cost), unsupervised vs supervised dense (training data).",
+        "The 2026 industrial pipeline: Query &rarr; [BM25 top-20] + [Vector top-20] &rarr; RRF top-30 &rarr; cross-encoder rerank &rarr; top 5-10."
+      ],
+      "papers": ["2020arXiv200908366G","2020arXiv200208155F","2022arXiv220303850G","2021arXiv210900859W","2020arXiv200412832K","2021arXiv211007811G","2024arXiv240201007S","2020arXiv200704973J","2022arXiv220403293S","2020arXiv201008191Q","2021arXiv211209118I","2022arXiv220110005N","2020arXiv201006467L","2021arXiv210313020Z","2021arXiv211102671L","2020arXiv201012908L","2020arXiv201204188Z","2020arXiv200208653W","2020arXiv200303238W"]
+    },
+    {
+      "key": "repo-scale",
+      "label": "Repository-Scale & Code Graphs",
+      "subtopic": "A file is a unit you read; a repository is a world you navigate. The field forks into retrieve-better-snippets (iterated similarity RAG) versus query-a-structured-model (code graphs), with agentic navigation walking between them.",
+      "themes": [
+        "Camp 1 &mdash; similarity, iterated: RepoCoder's retrieve-generate-retrieve loop; DraCo steers it with dataflow.",
+        "Camp 2 &mdash; query a structured world model: CodexGraph (graph DB + LLM-written queries), CodeGRAG (GNN expert), AOCI (symbolic-semantic blueprint).",
+        "Code-property-graph / knowledge-graph lineage: QVoG at 1M+ LOC, Code Digital Twin for tacit knowledge.",
+        "Camp 3 &mdash; agentic navigation: SWE-agent's agent-computer interface, OpenHands, MAGIS, LocAgent, CodePlan, ARISE.",
+        "Localization is a first-class sub-problem; flat similarity misses fix sites several call/import hops from the symptom.",
+        "Retrieval scope is three problems: local-aware, global-aware, third-party-library-aware (A^3-CodGen)."
+      ],
+      "how_measured": [
+        "RepoBench, CrossCodeEval: repo-level / cross-file completion (EM, identifier-F1).",
+        "SWE-bench: issue-resolution (Pass@k) the agentic camp competes on.",
+        "LocAgent: 92.7% file-level localization, +12% Pass@10, ~86% cheaper with a fine-tuned 32B.",
+        "QVoG: ~15 min vs ~19 min (CodeQL) at 1M+ LOC; AOCI: 2,160 evals + 19 industrial tasks, zero defects."
+      ],
+      "gaps": [
+        "Graphs cost a static-analysis build step + language-specific extractors + index maintenance; similarity RAG is cheaper and language-agnostic.",
+        "Referenced-but-uncorpus: RepoGraph (ICLR 2025), GRACE multi-semantic code graphs (arXiv:2509.05980) &mdash; the next reading.",
+        "Many results are small-N arXiv preprints (Jin n=24 localization tasks; AOCI industrial slice n=19)."
+      ],
+      "notable": [
+        "Industrial primitives are the ancestors of the academic 'code knowledge graph': Kythe (build-integrated), Glean (incremental Angle index), SCIP (cross-repo precise nav), Zoekt (trigram).",
+        "Jin 2026: across S-expr/JSON/YAML/Markdown there is no comprehension difference &mdash; pick descriptor format by safe-failure mode, not LLM preference."
+      ],
+      "papers": ["2023arXiv230312570Z","2023arXiv230603091L","2023arXiv231011248D","2024arXiv240719487W","2024arXiv240212317S","2023arXiv231006770J","2024arXiv240515793Y","2024arXiv240716741W","2024arXiv240405427Z","2025arXiv250309089C","2026arXiv260503117S","2024arXiv240601422M","2023arXiv230912499B","2026arXiv260502421L","2024arXiv240608098L","2025arXiv250318175S","2026arXiv260410767C","2025arXiv250307967P","2024arXiv240203630L","2026arXiv260422659L","2024arXiv240902977L","2024arXiv240909030W","2023arXiv231205772L","2024arXiv240803910L","2024arXiv240502355D","2024arXiv240317927T","2024arXiv240519782C","2024arXiv241204478K","2026arXiv260413108J","2025arXiv250321710Y"]
+    },
+    {
+      "key": "enterprise",
+      "label": "Enterprise Codebase Challenges",
+      "subtopic": "Scale does not just make existing problems bigger &mdash; it changes which problems exist: billions of LOC, polyglot dependency chains, access boundaries, dead code, tribal knowledge, build complexity, and an evaluation crisis where ground truth is contaminated or tautological.",
+      "themes": [
+        "Sheer size: Google ~2B LOC, 9M files, ~40K commits/day &mdash; query-time linear search is infeasible.",
+        "Escalation ladder: grep &rarr; trigram (Zoekt) &rarr; semantic index (Kythe) &rarr; incremental build-integrated (Glean) &rarr; cross-repo precise nav (SCIP). Text layer and semantic layer are routinely conflated.",
+        "Polyglot: defects hide at the language boundary; dependency-usage context (K-Trans) carries the hard-to-retrieve knowledge.",
+        "Tribal/proprietary knowledge: the 'why' lives in a person or Slack thread; product context lifts decision compliance 46%&rarr;95%.",
+        "Access-control boundaries: 'find references' that returns unreadable code is a leak &mdash; the thinnest academic sub-topic.",
+        "Local benchmark projects encode the real enterprise tasks: EnterpriseBench (multi-repo nav, tool-access-as-variable, dead_code_necropsy), CodeScaleBench (benchmarks the retrieval engines, not just LLMs), codeprobe (contamination-proof probes, multi-source consensus)."
+      ],
+      "how_measured": [
+        "Published EnterpriseBench (arXiv:2510.27287): 550 tasks, access-control hierarchies, SOTA ~21.5% (best agents fail ~4/5).",
+        "RepoQA: Searching-Needle-Function, 500 tasks / 50 repos / 5 languages; GPT-4 1.31% setup pass rate.",
+        "MutaGReP: plans use <5% of a 128K window yet rival full-repo GPT-4o (LongCodeArena).",
+        "Local CodeScaleBench (Haiku 4.5): mean reward 0.536 baseline &rarr; 0.565 MCP &mdash; real but modest.",
+        "Local EnterpriseBench: 112 tasks, 51% spanning 2-5 real OSS repos via real dependency chains; checkpoint partial-credit, 9 artifact validators.",
+        "codeprobe: multi-source consensus (Sourcegraph + AST oracle + grep, ship only when >=2 agree) + bias detectors (backend_overlap, overshipping, no_independent_baseline)."
+      ],
+      "gaps": [
+        "Access-control / retrieval-under-permission-boundaries is near-absent academically (only published EnterpriseBench + Sourcegraph compliance framing).",
+        "Industrial systems (Kythe/Zoekt/Glean/SCIP) are blog-grounded, not peer-reviewed.",
+        "Benchmark numbers collapse on production: Passerine reached ~73% plausible on machine-reported but only ~25.6% plausible / 17.9% correct on human-reported Google bugs."
+      ],
+      "notable": [
+        "The ground-truth tautology: if you generate the 'right answer' with the same tool you are evaluating, you have measured nothing (codeprobe).",
+        "Treat tool access as a controlled variable; always report a no-tool baseline &mdash; a tool that does not beat baseline is overhead (EnterpriseBench / CodeScaleBench).",
+        "RepoQA finding: models often understand code better with comments removed &mdash; synthetic comments are a distractor."
+      ],
+      "papers": ["2024arXiv240601359D","2024arXiv240606025L","2024arXiv240107339Z","2024arXiv240915204B","2024arXiv240913122W","2024arXiv240811058J","2025arXiv250215872K","2023arXiv230902182C","2025arXiv250417972A","2026arXiv260508112D","2025arXiv250318305O","2024arXiv240814354Z","2025arXiv250307967P","2024arXiv240204141D","2024arXiv241211869L","2025arXiv250107531R","2026arXiv260516517K"]
+    },
+    {
+      "key": "frontier",
+      "label": "Frontier & Open Problems",
+      "subtopic": "The bottleneck is no longer 'can a model write a function' but an infrastructure problem: put fresh, authorized, dependency-correct, build-grounded context in front of an agent inside a living monorepo.",
+      "themes": [
+        "Staleness-aware retrieval: stale context is net-negative &mdash; gate retrieval on freshness, not just relevance (Weng; DocSync).",
+        "Incremental real-time indexing: reframe indexing cost from O(repository) to O(changes) (Glean) &mdash; almost no peer-reviewed work, industry holds the frontier.",
+        "Graph-guided edit localization: 69.7% of correctly localized bugs need multi-hop KG traversal (KGCompass); GALA extends to multimodal GUI bugs.",
+        "Symbolic+semantic fusion at monorepo scale: nobody ships the fused, always-fresh index &mdash; the unclaimed prize (AOCI, QVoG vs Kythe/SCIP/Zoekt/Glean).",
+        "Access-control & tribal-knowledge retrieval: 'bounded delegation' with least-privilege scoping is what 860 developers asked for (To Copilot and Beyond).",
+        "Honest evaluation: contamination (Riddell) and tool-vs-no-tool causality undermine benchmark numbers unless explicitly controlled."
+      ],
+      "how_measured": [
+        "Staleness: stale-only retrieval &rarr; obsolete-API refs 15/17 (Qwen2.5-Coder-7B), 13/17 (gpt-4.1-mini), +88.2/+76.5 pp vs current-only; no-retrieval passed 1/17.",
+        "Localization: KGCompass 45.67% on SWE-bench-Lite at $0.20/repair.",
+        "Tribal knowledge: +49 pp decision compliance from product context.",
+        "Contamination: Riddell shows models score significantly higher on the seen subset of HumanEval/MBPP."
+      ],
+      "gaps": [
+        "Permission-aware retrieval and tribal-knowledge retrieval are the thinnest academically; enforcement leans on industry (PermLLM arXiv:2505.22860, Access Control for LLM Agents arXiv:2510.11108).",
+        "Long-context-vs-retrieval policy is genuinely open and thin in this corpus (Gemini 1.5 long-context referenced but absent); RepoQA is the needle-in-haystack foil.",
+        "Incremental indexing has almost no peer-reviewed coverage."
+      ],
+      "notable": [
+        "The defining bet: the first system that ships a fused symbolic+semantic index that stays fresh under O(changes) updates wins this frontier.",
+        "Retrieval can hurt &mdash; Weng's result is direct dissent against RAG-maximalist orthodoxy and argues for retrieval gating."
+      ],
+      "papers": ["2026arXiv260514478W","2024arXiv241204478K","2026arXiv260502163B","2025arXiv250321710Y","2026arXiv260408089L","2025arXiv250309089C","2026arXiv260503117S","2026arXiv260502421L","2024arXiv240608098L","2026arXiv260407830C","2026arXiv260508112D","2026arXiv260425960J","2026arXiv260524397C","2025arXiv250318305O","2024arXiv240606025L","2024arXiv240304811R","2026arXiv260413108J"]
+    }
+  ],
+  "reading": [
+    ["2020arXiv200208155F","CodeBERT: A Pre-Trained Model for Programming and Natural Languages","Foundations"],
+    ["2019arXiv190909436H","CodeSearchNet Challenge: Evaluating Semantic Code Search","Foundations"],
+    ["2023arXiv231006770J","SWE-bench: Can Language Models Resolve Real-World GitHub Issues?","Repo-scale / Enterprise"],
+    ["2020arXiv200908366G","GraphCodeBERT: Pre-training Code Representations with Data Flow","Techniques"],
+    ["2020arXiv200307914K","Big Code != Big Vocabulary: Open-Vocabulary Models for Source Code","Foundations"],
+    ["2020arXiv200514373L","CodeMatcher: Lexical Search Rivaling Neural Code Search","Foundations / Techniques"],
+    ["2024arXiv240702883L","CoIR: A Comprehensive Benchmark for Code Information Retrieval","Foundations"],
+    ["2023arXiv230312570Z","RepoCoder: Iterative Retrieval and Generation","Repo-scale"],
+    ["2023arXiv230603091L","RepoBench: Repository-Level Code Auto-Completion","Repo-scale"],
+    ["2024arXiv240515793Y","SWE-agent: Agent-Computer Interfaces","Repo-scale"],
+    ["2025arXiv250309089C","LocAgent: Graph-Guided LLM Agents for Code Localization","Repo-scale / Frontier"],
+    ["2026arXiv260508112D","Product Context Improves Agent Decision Compliance by 49%","Enterprise / Frontier"]
+  ],
+  "opportunities": [
+    ["Retrieval under access-control boundaries","Make permission a first-class retrieval feature, not a post-hoc filter: 'find references' must respect what the caller is allowed to read, or it leaks. The thinnest academic sub-topic; enforcement leans on PermLLM-style permissioned LLMs and dynamic ACLs for agentic information flows."],
+    ["Contamination-proof eval from private history","Public benchmarks (HumanEval, SWE-bench) are memorized; Riddell quantifies the seen-subset advantage. Mine contamination-proof probes from private/own repo history (codeprobe) instead of trusting memorized public sets."],
+    ["Symbolic+semantic hybrid index at monorepo scale","Symbolic indexes (Kythe/SCIP) are precise but build-coupled; semantic embeddings are cheap but imprecise on exact references. Nobody ships the fused, always-fresh index &mdash; the unclaimed prize (AOCI, QVoG are the corpus anchors)."],
+    ["Staleness-aware retrieval","Carry commit timestamps / version pins into the index and decline stale context rather than serving it &mdash; Weng shows serving stale context is worse than serving nothing (obsolete-API refs in 15/17 samples)."],
+    ["Polyglot dependency-aware retrieval","Cross-language defects hide at the boundary; retrieving class definitions plus their dependencies is vital for code buildability (K-Trans: dependency-usage examples contribute most; Multilingual Code Intelligence survey)."],
+    ["Tribal-knowledge retrieval","The 'why' of a decision lives in people, Slack threads, design docs &mdash; never in source. A separate retrieval substrate for decisions/specs/personas lifted compliance 46%&rarr;95%; it is retrievable and measurably changes behavior."],
+    ["Build-graph-grounded context selection","What even is the dependency graph is a question the build system answers; ground context selection in the build graph (Kythe/Glean are build-integrated) rather than text similarity over files."],
+    ["Tool-vs-no-tool causal evaluation","The field lacks a clean isolation of 'did the tool help, or did the model already know?' Always report a no-tool baseline and isolate the tool variable (CodeScaleBench engines comparison; codeprobe MCP-vs-no-MCP isolation modes)."],
+    ["Long-context vs retrieval policy","When does a million-token full-repo dump beat selective retrieval? Capacity is not comprehension (RepoQA); a <5%-of-window grounded plan rivals full-repo GPT-4o (MutaGReP). The honest open question is the crossover point."],
+    ["Incremental real-time index maintenance","Reframe indexing from O(repository) to O(changes): a 40K-commits/day monorepo cannot be fully re-indexed per change. Glean is the production exemplar; peer-reviewed work is nearly absent."],
+    ["Graph-guided edit localization","Flat similarity structurally misses bug-fix sites: 69.7% of correctly localized bugs needed multi-hop KG traversal (KGCompass). Build a language-agnostic, incrementally-updatable repository graph before scaling embeddings."],
+    ["Cost-latency-bounded retrieval at scale","Latency and UX are first-order at enterprise scale (Meta CodeCompose). Design retrieval under explicit cost/latency budgets &mdash; a cascade that spends the expensive technique only on a short pre-pruned list."]
+  ],
+  "design": [
+    {
+      "title": "CodeSearchNet → CoIR: the code-IR benchmark family",
+      "bibcode": "2024arXiv240702883L",
+      "task_design": "NL→code retrieval evaluated as ranking the correct function for a natural-language query. CodeSearchNet pairs (docstring, function) across 6 languages and was built explicitly around the query/code vocabulary gap; CoIR generalizes to a comprehensive multi-task, multi-language code-IR suite consolidating a fragmented landscape into one benchmark.",
+      "data_generation": "CodeSearchNet harvests docstring/function pairs from open-source repos; CoIR aggregates and standardizes many code-IR tasks (text-to-code, code-to-code, retrieval-augmented) so models are compared on one preprocessing regime. CoSQA+ adds genuine developer web-search queries to escape synthetic-docstring bias.",
+      "metrics": "Mean Reciprocal Rank (MRR) / nDCG / recall@k over a candidate pool; CoIR reports per-task and aggregate scores across languages.",
+      "key_numbers": ["6 languages (CodeSearchNet)","CoIR consolidates a multi-task multi-language suite (the modern successor)","Cross-paper CodeSearchNet MRR is not apples-to-apples — the exact problem CoIR fixes"],
+      "reusable_for_role": "Evaluation harness designers: use CoIR (not raw CodeSearchNet MRR) as the standing spine for comparing retrievers, and CodeBLEU-style structural metrics for synthesis — never plain BLEU or exact-match, which silently punish semantically-correct outputs."
+    },
+    {
+      "title": "LocAgent: graph-guided code localization",
+      "bibcode": "2025arXiv250309089C",
+      "task_design": "Given a GitHub issue, localize the file(s)/function(s) to edit by parsing the codebase into a directed heterogeneous graph (files/classes/functions as nodes; imports/invocations/inheritance as edges) and letting the agent do multi-hop reasoning over it, rather than flat similarity retrieval.",
+      "data_generation": "Localization tasks derived from real issue-resolution benchmarks; graph constructed by static parsing of the repository, so it is language-agnostic and incrementally updatable.",
+      "metrics": "File-level localization accuracy; downstream issue-resolution success (Pass@10); cost per task.",
+      "key_numbers": ["92.7% file-level localization accuracy","+12% issue-resolution success (Pass@10)","~86% lower cost with a fine-tuned Qwen-2.5-Coder-32B vs proprietary SOTA","Corroborated by KGCompass: 69.7% of localized bugs need multi-hop traversal"],
+      "reusable_for_role": "Agent-infra builders: make localization its own measurable component (cf. MAGIS's Repository Custodian), build a repository graph before scaling embeddings, and traverse it with multi-hop reasoning to reach fix sites that are not lexically near the symptom."
+    },
+    {
+      "title": "EnterpriseBench (local): multi-repo navigation with tool-access as a controlled variable",
+      "bibcode": "",
+      "task_design": "Coding-agent navigation of large, distributed, MULTI-REPO enterprise codebases. 112 tasks / 10 task types / 7 workflow suites (Dependency Mgmt, Customer Escalation, Technical Debt, Feature Delivery, Incident Response, Platform Eng, Security Ops). Encodes monorepo boundary navigation, dead/stale code (dead_code_necropsy task type), polyglot dependency complexity, and config drift. Crucially makes tool access a controlled variable: grep/find vs Sourcegraph-MCP vs hybrid.",
+      "data_generation": "51% of tasks span 2-5 real OSS repos via real dependency chains (grpc-go→etcd→kubernetes; protobuf→Go→Python→TS). Distinct from the published arXiv:2510.27287 namesake. Refuses to assume the agent can see everything.",
+      "metrics": "Checkpoint partial-credit scoring with 9 artifact validators; contrasts SWE-bench / ITBench / DevOps-Gym; always reports a no-tool baseline.",
+      "key_numbers": ["112 tasks / 10 task types / 7 workflow suites","51% of tasks span 2-5 real OSS repos","9 artifact validators","Published EnterpriseBench (arXiv:2510.27287) SOTA ~21.5% — best agents fail ~4/5 enterprise tasks"],
+      "reusable_for_role": "Enterprise eval designers: treat tool access as a controlled variable and always report a no-tool baseline (a tool that doesn't beat baseline is overhead); use checkpoint partial-credit and artifact validators instead of single pass/fail; pair with codeprobe's multi-source consensus to defeat the ground-truth tautology."
+    }
+  ],
+  "design_principles": [
+    "Default to hybrid, not embeddings: treat exact/lexical match as a first-class lane and fuse with a dense retriever on ranks (RRF), not raw scores.",
+    "Add a structural lane where you can parse the language: AST/data-flow signals (GraphCodeBERT/MISIM) pay off on symbol-level and cross-file queries; degrade to lexical+dense on files that don't parse.",
+    "Spend the expensive technique only on the shortlist: a cheap first stage prunes the corpus; a cross-encoder or ColBERT-style late interaction reranks the top 20-30.",
+    "Mine hard negatives or your embeddings underperform (RocketQA, CoCoSoDa) — the retriever is only as good as its negatives.",
+    "Index, don't just embed: a static-analysis graph (CodexGraph) or symbolic-semantic blueprint (AOCI) answers multi-hop structural questions vector RAG cannot.",
+    "Make localization its own component, separate from patch generation (MAGIS, LocAgent).",
+    "Give the agent a map before it explores: front-load architecture context; undirected grep/glob is a measurable tax and search can backfire.",
+    "Gate retrieval on freshness and permissions, not just relevance: stale or unauthorized context is worse than none.",
+    "Treat tool access as a controlled variable in evals and always report a no-tool baseline.",
+    "Budget for the half of the truth not in the source: a separate retrieval substrate for tribal/product knowledge can outweigh another point of code-search recall."
+  ],
+  "design_pitfalls": [
+    "Shipping 'semantic code search' as embeddings-only and being surprised it can't find OAuth2TokenValidator — embeddings miss rare exact identifiers that grep nails.",
+    "Fusing lexical and dense lanes on raw scores; BM25 and cosine live on incomparable scales — fuse on ranks.",
+    "Evaluating code retrieval/synthesis with text metrics (BLEU, exact-match), which punish semantically-correct outputs — use CodeBLEU and a real code-IR suite.",
+    "Conflating the trigram text layer (Zoekt: where does this string appear) with the semantic layer (Kythe/SCIP: where is this symbol defined) — they answer different questions.",
+    "Full-reindexing a 40K-commits/day monorepo: a stale index silently degrades every agent downstream; incremental indexing is architecture, not optimization.",
+    "Serving stale retrieval results: under hidden freshness, retrieval was net-negative and injected obsolete APIs (Weng).",
+    "Undirected exploration: more searching is not more finding — SWE-agent shows iterative search can degrade performance vs no search.",
+    "Choosing descriptor formats by presumed LLM preference rather than safe-failure mode (JSON fails atomically, YAML silently corrupts 50%, S-expressions detect all structural errors).",
+    "Trusting public-benchmark numbers as production capability — they collapse on human-reported enterprise work (Passerine ~25.6% vs ~73% machine-reported).",
+    "The ground-truth tautology: generating the 'right answer' with the same tool you're evaluating measures nothing — require multi-source consensus (>=2 of {Sourcegraph, AST oracle, grep})."
+  ],
+  "temporal": {
+    "publication_volume": [
+      {"year":2016,"count":1,"note":"Deep API Learning / DeepCS lineage — learning the NL→API mapping before the encoder era."},
+      {"year":2019,"count":1,"note":"CodeSearchNet establishes the foundational NL→code retrieval benchmark."},
+      {"year":2020,"count":15,"note":"The CodeBERT explosion: bimodal encoders, GraphCodeBERT data flow, ColBERT late interaction, MISIM, CodeMatcher, CodeBLEU, RocketQA — the technique ladder forms."},
+      {"year":2021,"count":6,"note":"Contrastive + graph rungs mature (Contriever, CodeT5, deGraphCS, GraphSearchNet); query reformulation review."},
+      {"year":2022,"count":4,"note":"Unified/cross-modal embeddings (UniXcoder, CoCoSoDa), survey consolidation, large-scale text+code contrastive."},
+      {"year":2023,"count":8,"note":"Repo-scale arrives: RepoCoder, RepoBench, CrossCodeEval, SWE-bench, CodePlan, A^3-CodGen — retrieval becomes navigation."},
+      {"year":2024,"count":29,"note":"The agentic + graph + RAG wave: SWE-agent, OpenHands, CodexGraph, DraCo, QVoG, CoIR, RepoQA, MutaGReP plus the enterprise-completion cluster."},
+      {"year":2025,"count":8,"note":"Graph-guided localization and knowledge graphs (LocAgent, KGCompass, Code Digital Twin, K-Trans); industrial-scale clone detection."},
+      {"year":2026,"count":13,"note":"Frontier: staleness diagnostics, doc-drift, multimodal graph localization, symbolic-semantic indexing, access-control/tribal-knowledge framing, contamination-aware eval."}
+    ],
+    "citation_trajectories": [
+      {"bibcode":"2020arXiv200208155F","title":"CodeBERT","per_year":[{"year":2020,"citations":914}]},
+      {"bibcode":"2019arXiv190909436H","title":"CodeSearchNet","per_year":[{"year":2019,"citations":780}]},
+      {"bibcode":"2020arXiv200908366G","title":"GraphCodeBERT","per_year":[{"year":2020,"citations":457}]},
+      {"bibcode":"2021arXiv210900859W","title":"CodeT5","per_year":[{"year":2021,"citations":366}]},
+      {"bibcode":"2023arXiv231006770J","title":"SWE-bench","per_year":[{"year":2023,"citations":243}]}
+    ],
+    "benchmark_progression": [
+      "2019: CodeSearchNet — the foundational NL→code retrieval yardstick (MRR, 6 languages).",
+      "2020: CodeBLEU re-grounds synthesis evaluation in AST + data flow.",
+      "2023: RepoBench / CrossCodeEval make cross-file completion measurable; SWE-bench makes real issue resolution the agentic yardstick.",
+      "2024: CoIR consolidates code-IR eval; RepoQA tests long-context understanding; CodeRAG-Bench isolates whether retrieval helps.",
+      "2025-2026: localization-specific (KGCompass, LocAgent), staleness diagnostics (Weng), contamination-aware (Riddell), and enterprise sandboxes (published EnterpriseBench ~21.5% SOTA) — the bars move from 'retrieve from a visible repo' to 'navigate a repo you can't fully see, freshly and honestly'."
+    ],
+    "narrative": "The field matured along one arc: borrow text IR, discover it breaks on code, then climb a technique ladder (lexical → neural → graph → rerank) before scaling from file to repository to enterprise. Citations concentrate in the 2020 encoder wave (CodeBERT, GraphCodeBERT) and the 2023 SWE-bench pivot to issue resolution, but the volume center of gravity is the 2024 agentic/graph/RAG explosion. By 2026 the frontier is explicitly an infrastructure problem — freshness, access-control, multi-hop graph localization, and honest tool-causal evaluation — where industry (Kythe, Glean, SCIP, Zoekt) still leads the peer-reviewed literature."
+  }
+}
